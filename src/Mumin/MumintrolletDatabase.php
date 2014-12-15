@@ -35,40 +35,20 @@ class MumintrolletDatabase extends \Mos\Database\CDatabaseBasic
 
 
     /**
-     * My name is.
-     *
-     * @return string
-     *
-     */
-    public function createTableTest()
-    {
-        $this->dropTableIfExists("test");
-        $this->createTable(
-            'test',
-            [
-                'id'    => ['integer', 'auto_increment', 'primary key', 'not null'],
-                'age'   => ['integer'],
-                'text'  => ['varchar(20)'],
-            ]
-        );
-        return $this->execute();
-    }
-
-
-
-    /**
-    * My name is.
+    * My name is - from database.
     *
     * @return string
     *
     */
-    public function getName1()
+    public function getNameFromDatabase()
     {
-        $db->insert(
-            'test',
-            ['age', 'text']
-        );
+        $this->select("name")
+           ->from("test")
+           ->where("id = ?")
+        ;
 
-        $db->execute($rows[0]);
+        $res = $this->executeFetchAll([1]);
+        $name = isset($res[0]->name) ? $res[0]->name : false;
+        return $name;
     }
 }

@@ -9,22 +9,60 @@ namespace Mos\Mumin;
 class MumintrolletDatabaseTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $mumin;
+    static private $mumin;
+    const NAME =  "Mumintrollet in db";
 
 
 
     /**
-     * SetUp
+     * setUpBeforeClass, called once for all tests in this class.
      *
      * @return void
      *
      */
-     protected function setUp()
-     {
-        $this->mumin = new \Mos\Mumin\MumintrolletDatabase();
-        $this->mumin->setOptions(['dsn' => "sqlite:memory::", "verbose" => true]);
-        $this->mumin->connect();
+    public static function setUpBeforeClass()
+    {
+        self::$mumin = new \Mos\Mumin\MumintrolletDatabase();
+        self::$mumin->setOptions(['dsn' => "sqlite:memory::", "verbose" => false]);
+        self::$mumin->connect();
 
+        self::$mumin->dropTableIfExists("test");
+        self::$mumin->execute();
+
+        self::$mumin->createTable(
+            'test',
+            [
+                'id'    => ['integer', 'auto_increment', 'primary key', 'not null'],
+                'name'  => ['varchar(20)'],
+            ]
+        );
+        self::$mumin->execute();
+
+        self::$mumin->insert(
+            'test',
+            ['name']
+        );
+        self::$mumin->execute([self::NAME]);
+
+        /*
+        self::$mumin->select("*")
+            ->from("test")
+        ;
+        var_dump(self::$mumin->executeFetchAll());
+        */
+    }
+
+
+
+    /**
+     * SetUp, called before each testcase.
+     *
+     * @return void
+     *
+     */
+    public function setUp()
+    {
+        // Nothing to do.
     }
 
 
@@ -37,7 +75,7 @@ class MumintrolletDatabaseTest extends \PHPUnit_Framework_TestCase
     */
     public function testGetName()
     {
-        $res = $this->mumin->getName();
+        $res = self::$mumin->getName();
         $exp = "My Name is Mumintrollet.";
         $this->assertEquals($res, $exp, "The name does not match.");
     }
@@ -50,9 +88,10 @@ class MumintrolletDatabaseTest extends \PHPUnit_Framework_TestCase
     * @return void
     *
     */
-    public function testCreateTable()
+    public function testGetNameFromDatabase()
     {
-        $res = $this->mumin->createTableTest();
-        $this->assertTrue($res, "Failed to create database tables.");
+        $res = self::$mumin->getNameFromDatabase();
+        $exp = self::NAME;
+        $this->assertEquals($res, $exp, "The name does not match name from db.");
     }
 }

@@ -10,7 +10,7 @@ class MumintrolletTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * Test
+     * Test 1
      *
      * @return void
      *
